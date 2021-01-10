@@ -73,4 +73,18 @@ def find_changes(img1, img2):
     thresh = cv2.dilate(thresh, None, iterations=2)
     contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    return contours[0], thresh
+    return contours[0]
+
+
+def handle_contours(contours, output, area):
+    for contour in contours:
+        if cv2.contourArea(contour) < area:
+            continue
+
+        (x, y, w, h) = cv2.boundingRect(contour)
+        cv2.rectangle(output, (x, y), (x + w, y + h), (128, 255, 147), 2)
+
+
+def clean_noise(to_clean):
+    kernel = cv2.getStructuringElement(shape=cv2.MORPH_RECT, ksize=(1, 1))
+    return cv2.morphologyEx(to_clean, cv2.MORPH_OPEN, kernel)
