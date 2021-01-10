@@ -38,10 +38,39 @@ def image_resize(image, width=None, height=None, inter=cv2.INTER_AREA):
     return resized
 
 
+# Adjust image gamma
+# Taken from https://stackoverflow.com/questions/33322488/how-to-change-image-illumination-in-opencv-python/41061351
+def adjust_gamma(image, gamma=1.0):
+    invGamma = 1.0 / gamma
+    table = np.array([((i / 255.0) ** invGamma) * 255
+                      for i in np.arange(0, 256)]).astype("uint8")
+
+    return cv2.LUT(image, table)
+
+
+# Estimate image light
+# Taken from https://stackoverflow.com/questions/52505906/find-if-image-is-bright-or-dark/52506830
+def img_estim(img, thrshld):
+    is_light = np.mean(img) > thrshld
+    return True if is_light else False
+
+
 # Pre processes a frame
 # Resizes, converts to gray and then smooths the image to eliminate noise
 def pre_processing(image):
     resized_image = image_resize(image, width=500)
     to_gray = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
-    pre_processed_image = cv2.GaussianBlur(to_gray, (21, 21), 0)
+    pre_processed_image = cv2.GaussianBlur(to_gray, (15, 15), 0)
     return pre_processed_image
+
+
+# Change Detection
+def find_changes(img1, img2):
+    # Find the absdiff between the two images, to find the visual differences
+    diff_img = cv2.absdiff(img1, img2)
+    dummy, thresh = cv2.threshold(diff_img, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+
+    thresh = cv2.dilate(thresh, None, iterations=2)
+    contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    return contours[0], thresh
