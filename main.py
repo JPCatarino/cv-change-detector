@@ -79,6 +79,7 @@ def mog_video_compare():
         fgbg = cv2.createBackgroundSubtractorMOG2(detectShadows=False)
         pre_proc_back = image_processing.pre_processing(background)
         fgbg.apply(pre_proc_back)
+        learning_rate = 0.0009
     else:
         val = False
 
@@ -86,7 +87,7 @@ def mog_video_compare():
         val, frame = vc.read()
         output = image_processing.image_resize(frame, width=500)
         pre_proc_fore = image_processing.pre_processing(frame)
-        mask = fgbg.apply(pre_proc_fore, learningRate=0)
+        mask = fgbg.apply(pre_proc_fore, learningRate=learning_rate)
 
         cleaned_mask = image_processing.clean_noise(mask.copy())
         contours = cv2.findContours(cleaned_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
