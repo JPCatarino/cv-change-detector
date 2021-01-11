@@ -52,11 +52,13 @@ def main_video_compare():
         output = image_processing.image_resize(frame.copy(), width=500)
         pre_proc_fore = image_processing.pre_processing(frame)
 
-        contours = image_processing.find_changes(pre_proc_back, pre_proc_fore)
+        contours, thresh = image_processing.find_changes(pre_proc_back, pre_proc_fore, cv2.THRESH_OTSU)
 
         image_processing.handle_contours(contours, output, args.area)
 
         cv2.imshow("Cam", output)
+        cv2.imshow("thresh", thresh)
+        cv2.imshow("back", pre_proc_back)
 
         key = cv2.waitKey(20)
 
@@ -84,9 +86,10 @@ def mog_video_compare():
         val, frame = vc.read()
         output = image_processing.image_resize(frame, width=500)
         pre_proc_fore = image_processing.pre_processing(frame)
-        mask = fgbg.apply(pre_proc_fore)
+        mask = fgbg.apply(pre_proc_fore, learningRate=0)
+
         cleaned_mask = image_processing.clean_noise(mask.copy())
-        contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
+        contours = cv2.findContours(cleaned_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
 
         image_processing.handle_contours(contours, output, args.area)
 

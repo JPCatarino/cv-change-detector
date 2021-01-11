@@ -65,15 +65,15 @@ def pre_processing(image):
 
 
 # Change Detection
-def find_changes(img1, img2):
+def find_changes(img1, img2, threshold_setting):
     # Find the absdiff between the two images, to find the visual differences
     diff_img = cv2.absdiff(img1, img2)
-    dummy, thresh = cv2.threshold(diff_img, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+    dummy, thresh = cv2.threshold(diff_img, 0, 255, threshold_setting)
 
     thresh = cv2.dilate(thresh, None, iterations=2)
     contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    return contours[0]
+    return contours[0], thresh
 
 
 def handle_contours(contours, output, area):
