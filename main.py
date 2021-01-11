@@ -11,10 +11,10 @@ from utils import image_processing
 def main_image_compare(img1, img2):
     output = image_processing.image_resize(img2.copy(), width=500)
     compare = image_processing.image_resize(img1.copy(), width=500)
-    pre_proc_img1 = image_processing.pre_processing(img1)
-    pre_proc_img2 = image_processing.pre_processing(img2)
+    pre_proc_img1 = image_processing.pre_processing(img1, blur_ksize=(15, 15))
+    pre_proc_img2 = image_processing.pre_processing(img2, blur_ksize=(15, 15))
 
-    contours = image_processing.find_changes(pre_proc_img1, pre_proc_img2)
+    contours = image_processing.find_changes(pre_proc_img1, pre_proc_img2, cv2.THRESH_OTSU)
 
     image_processing.handle_contours(contours, output, args.area)
 
@@ -43,14 +43,14 @@ def main_video_compare():
         for i in range(10):
             val, frame = vc.read()
         val, background = vc.read()
-        pre_proc_back = image_processing.pre_processing(background)
+        pre_proc_back = image_processing.pre_processing(background, blur_ksize=(15, 15))
     else:
         val = False
 
     while val:
         val, frame = vc.read()
         output = image_processing.image_resize(frame.copy(), width=500)
-        pre_proc_fore = image_processing.pre_processing(frame)
+        pre_proc_fore = image_processing.pre_processing(frame, blur_ksize=(15, 15))
 
         contours, thresh = image_processing.find_changes(pre_proc_back, pre_proc_fore, cv2.THRESH_OTSU)
 
@@ -77,7 +77,7 @@ def mog_video_compare():
             val, frame = vc.read()
         val, background = vc.read()
         fgbg = cv2.createBackgroundSubtractorMOG2(detectShadows=False)
-        pre_proc_back = image_processing.pre_processing(background)
+        pre_proc_back = image_processing.pre_processing(background, blur_ksize=(15, 15))
         fgbg.apply(pre_proc_back)
         learning_rate = 0.0009
     else:
@@ -86,7 +86,7 @@ def mog_video_compare():
     while val:
         val, frame = vc.read()
         output = image_processing.image_resize(frame, width=500)
-        pre_proc_fore = image_processing.pre_processing(frame)
+        pre_proc_fore = image_processing.pre_processing(frame, blur_ksize=(15, 15))
         mask = fgbg.apply(pre_proc_fore, learningRate=learning_rate)
 
         cleaned_mask = image_processing.clean_noise(mask.copy())

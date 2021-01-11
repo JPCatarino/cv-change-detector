@@ -57,10 +57,10 @@ def img_estim(img, thrshld):
 
 # Pre processes a frame
 # Resizes, converts to gray and then smooths the image to eliminate noise
-def pre_processing(image):
-    resized_image = image_resize(image, width=500)
+def pre_processing(image, resize_value=500, blur_ksize=(5, 5)):
+    resized_image = image_resize(image, width=resize_value)
     to_gray = cv2.cvtColor(resized_image, cv2.COLOR_BGR2GRAY)
-    pre_processed_image = cv2.GaussianBlur(to_gray, (15, 15), 0)
+    pre_processed_image = cv2.GaussianBlur(to_gray, blur_ksize, 0)
     return pre_processed_image
 
 
