@@ -95,7 +95,7 @@ def mog_video_compare():
         image_processing.handle_contours(contours, output, args.area)
 
         cv2.imshow("Cam", output)
-        cv2.imshow("Mask", mask)
+        cv2.imshow("Mask", cleaned_mask)
 
         key = cv2.waitKey(20)
 

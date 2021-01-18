@@ -77,12 +77,18 @@ def find_changes(img1, img2, threshold_setting):
 
 
 def handle_contours(contours, output, area):
+    change_counter = 0
     for contour in contours:
         if cv2.contourArea(contour) < area:
             continue
 
         (x, y, w, h) = cv2.boundingRect(contour)
         cv2.rectangle(output, (x, y), (x + w, y + h), (128, 255, 147), 2)
+        cv2.putText(output, 'Possible Intruder', (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (128, 255, 147), 2)
+        change_counter += 1
+
+    cv2.putText(output, "Number of Intruders detected: " + str(change_counter), (10, 10), cv2.FONT_HERSHEY_SIMPLEX, 0.4,
+                (0, 0, 255), 2)
 
 
 def clean_noise(to_clean):
