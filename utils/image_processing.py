@@ -38,23 +38,6 @@ def image_resize(image, width=None, height=None, inter=cv2.INTER_AREA):
     return resized
 
 
-# Adjust image gamma
-# Taken from https://stackoverflow.com/questions/33322488/how-to-change-image-illumination-in-opencv-python/41061351
-def adjust_gamma(image, gamma=1.0):
-    invGamma = 1.0 / gamma
-    table = np.array([((i / 255.0) ** invGamma) * 255
-                      for i in np.arange(0, 256)]).astype("uint8")
-
-    return cv2.LUT(image, table)
-
-
-# Estimate image light
-# Taken from https://stackoverflow.com/questions/52505906/find-if-image-is-bright-or-dark/52506830
-def img_estim(img, thrshld):
-    is_light = np.mean(img) > thrshld
-    return True if is_light else False
-
-
 # Pre processes a frame
 # Resizes, converts to gray and then smooths the image to eliminate noise
 def pre_processing(image, resize_value=500, blur_ksize=(5, 5)):
