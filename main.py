@@ -40,7 +40,7 @@ def main_video_compare():
 
     if vc.isOpened():
         # Skip a few frames for camera to be stable
-        for i in range(10):
+        for i in range(60):
             val, frame = vc.read()
         val, background = vc.read()
         pre_proc_back = image_processing.pre_processing(background, blur_ksize=(15, 15))
@@ -64,6 +64,9 @@ def main_video_compare():
 
         if key == 27:
             break
+        elif key == ord('b'):
+            val, background = vc.read()
+            pre_proc_back = image_processing.pre_processing(background, blur_ksize=(15, 15))
 
     vc.release()
     cv2.destroyAllWindows()
@@ -73,7 +76,7 @@ def mog_video_compare():
     vc = cv2.VideoCapture(0)
 
     if vc.isOpened():
-        for i in range(10):
+        for i in range(60):
             val, frame = vc.read()
         val, background = vc.read()
         fgbg = cv2.createBackgroundSubtractorMOG2(detectShadows=False)
