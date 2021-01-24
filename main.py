@@ -14,7 +14,7 @@ def main_image_compare(img1, img2):
     pre_proc_img1 = image_processing.pre_processing(img1, blur_ksize=(15, 15))
     pre_proc_img2 = image_processing.pre_processing(img2, blur_ksize=(15, 15))
 
-    contours = image_processing.find_changes(pre_proc_img1, pre_proc_img2, cv2.THRESH_OTSU)
+    contours, thresh = image_processing.find_changes(pre_proc_img1, pre_proc_img2, cv2.THRESH_OTSU)
 
     image_processing.handle_contours(contours, output, args.area)
 
